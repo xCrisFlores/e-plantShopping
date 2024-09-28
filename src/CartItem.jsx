@@ -11,8 +11,9 @@ const CartItem = ({ onContinueShopping }) => {
   const calculateTotalAmount = () => {
     let totalCost = 0;
     cart.forEach((item) => {
-        totalCost += item.cost * item.quantity;
-      });
+      totalCost += item.cost * item.quantity;
+    });
+    return totalCost;
   };
 
   const handleContinueShopping = (e) => {
@@ -20,33 +21,35 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const handleIncrement = (item) => {
-    item.quantity++;
-    dispatch(updateQuantity(item));
+    dispatch(updateQuantity({ ...item, quantity: item.quantity + 1 }));
   };
 
   const handleDecrement = (item) => {
-    item.quantity--;
-    dispatch(updateQuantity(item));
+    if (item.quantity > 1) {
+      dispatch(updateQuantity({ ...item, quantity: item.quantity - 1 }));
+    }
   };
 
   const handleRemove = (item) => {
-    dispatch(removeItem(item));
+    dispatch(removeItem(item.name));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    return item.cost * item.quantity;
   };
+
+  const totalAmount = calculateTotalAmount(); 
 
   return (
     <div className="cart-container">
-      <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
+      <h2 style={{ color: 'black' }}>Total Cart Amount: ${totalAmount}</h2>
       <div>
         {cart.map(item => (
           <div className="cart-item" key={item.name}>
             <img className="cart-item-image" src={item.image} alt={item.name} />
             <div className="cart-item-details">
               <div className="cart-item-name">{item.name}</div>
-              <div className="cart-item-cost">{item.cost}</div>
               <div className="cart-item-quantity">
                 <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
                 <span className="cart-item-quantity-value">{item.quantity}</span>
@@ -69,5 +72,3 @@ const CartItem = ({ onContinueShopping }) => {
 };
 
 export default CartItem;
-
-
